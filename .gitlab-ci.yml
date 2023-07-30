@@ -1,0 +1,61 @@
+stages:
+  - validate
+  - build
+  - deploy
+############
+include:
+  - local: "base.yml"
+  
+###########
+.prepare-init:
+  script:
+    #- terraform --version
+    - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME"
+    - cd $DIR_PATH
+    - SOURCE="prod"
+    - if [ $CI_COMMIT_REF_NAME != "prod" ]; then SOURCE="dev"; fi;
+    - terraform init -input=false --backend-config=env/$SOURCE.conf
+
+.prepare-workspace:
+  script:
+    - terraform workspace select $CI_COMMIT_REF_NAME
+
+.base-rules:
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "prod" && $CI_COMMIT_REF_NAME != "dev" && $CI_JOB_STAGE != "validate"
+      when: never
+    - if: ($CI_COMMIT_REF_NAME == "prod" || $CI_COMMIT_REF_NAME == "dev") && $CI_JOB_STAGE == "validate"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "push"  
+      changes: 
+        - $RULES_CHANGES_PATH
+
+.validate:
+  stage: validate
+  script:
+    - !reference [.prepare-init, script]
+    - terraform validate
+  
+.plan:
+  stage: build
+  script:
+    - !reference [.prepare-init, script]
+    - !reference [.prepare-workspace, script]
+    - terraform plan -lock=false -var-file=env/$CI_COMMIT_REF_NAME.tfvars -out=${PLAN}
+    - terraform show --json ${PLAN} | jq -r '([.resource_changes[]?.change.actions?]|flatten)|{"create":(map(select(.=="create"))|length),"update":(map(select(.=="update"))|length),"delete":(map(select(.=="delete"))|length)}' > ${JSON_PLAN_FILE}
+  artifacts:
+    name: $CI_COMMIT_REF_NAME
+    reports:
+      terraform: ${TF_ROOT}/$DIR_PATH/${JSON_PLAN_FILE}
+    paths:
+      - ${TF_ROOT}/$DIR_PATH/${JSON_PLAN_FILE}
+    expire_in: 7 days
+
+.apply:
+  stage: deploy
+  script:
+    - !reference [.prepare-init, script]
+    - !reference [.prepare-workspace, script]
+    - terraform $TF_COMMAND -var-file=env/$CI_COMMIT_REF_NAME.tfvars -input=false -auto-approve
+  when: manual
+  allow_failure: false
