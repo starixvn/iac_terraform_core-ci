@@ -10,10 +10,10 @@ include:
 .prepare-init:
   script:
     #- terraform --version
-    - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME"
+    - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE"
     - cd $DIR_PATH
     - SOURCE="prod"
-    - if [ $CI_COMMIT_REF_NAME != "prod" ]; then SOURCE="dev"; fi;
+    - if [ $CI_COMMIT_REF_NAME != "prod" ]; then SOURCE="test"; fi;
     - terraform init -input=false --backend-config=env/$SOURCE.conf
 
 .prepare-workspace:
@@ -22,9 +22,9 @@ include:
 
 .base-rules:
   rules:
-    - if: $CI_COMMIT_REF_NAME != "prod" && $CI_COMMIT_REF_NAME != "dev" && $CI_JOB_STAGE != "validate"
+    - if: $CI_COMMIT_REF_NAME != "prod" && $CI_COMMIT_REF_NAME != "test" && $CI_JOB_STAGE != "validate"
       when: never
-    - if: ($CI_COMMIT_REF_NAME == "prod" || $CI_COMMIT_REF_NAME == "dev") && $CI_JOB_STAGE == "validate"
+    - if: ($CI_COMMIT_REF_NAME == "prod" || $CI_COMMIT_REF_NAME == "test") && $CI_JOB_STAGE == "validate"
       when: never
     - if: $CI_PIPELINE_SOURCE == "push"  
       changes: 
