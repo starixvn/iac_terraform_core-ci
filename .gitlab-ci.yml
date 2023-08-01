@@ -41,7 +41,7 @@ include:
   script:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
-    - terraform plan -lock=false -var-file=env/$CI_COMMIT_REF_NAME.tfvars -out=${PLAN}
+    - terraform plan -var-file=env/$CI_COMMIT_REF_NAME.tfvars -out=${PLAN} # -lock=false
     - terraform show --json ${PLAN} | jq -r '([.resource_changes[]?.change.actions?]|flatten)|{"create":(map(select(.=="create"))|length),"update":(map(select(.=="update"))|length),"delete":(map(select(.=="delete"))|length)}' > ${JSON_PLAN_FILE}
   artifacts:
     name: $CI_COMMIT_REF_NAME
