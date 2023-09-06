@@ -25,9 +25,6 @@ before_script:
       elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export AWS_PROFILE=uat;
       elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_PROFILE=prod;
     fi;
-  - aws configure list
-  - cat ~/.aws/config
-  - cat ~/.aws/credentials
 cache:
   - key: $DIR_PATH-$CI_COMMIT_REF_NAME-terraform
     paths:
