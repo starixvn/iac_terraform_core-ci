@@ -15,9 +15,9 @@ include:
     - aws configure list
     #- cat .aws/config
     #- cat .aws/credentials
-    - SOURCE="prod"
-    - if [ $CI_COMMIT_REF_NAME != "prod" ]; then SOURCE="test"; fi;
-    - terraform init -input=false --backend-config=env/$SOURCE.conf
+    #- SOURCE="prod"
+    #- if [ $CI_COMMIT_REF_NAME != "prod" ]; then SOURCE="test"; fi;
+    - terraform init -input=false --backend-config=env/$AWS_PROFILE.conf
 
 .prepare-workspace:
   script:
