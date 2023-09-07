@@ -24,7 +24,7 @@ before_script:
   # copy content of AWS_SHARED_CREDENTIALS_FILE to ~/.aws/credentials
   - cat "$AWS_SHARED_CREDENTIALS_FILE" > ~/.aws/credentials
   # set permissions
-  - chmod 600 ~/.aws/credentials
+  - chmod 600 ~/.aws/credentials && cat ~/.aws/credentials
   - if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_PROFILE=local;
       elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_PROFILE=testlab;
       elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_PROFILE=local;
