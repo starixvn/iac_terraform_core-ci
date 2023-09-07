@@ -19,6 +19,12 @@ before_script:
   - git config --global user.name "ansible"
   - echo -e "${SSH_PRIVATE_KEY_1}\n${SSH_PRIVATE_KEY_2}\n${SSH_PRIVATE_KEY_3}" | ssh-add -
   - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
+  # create ~/.aws dir if not present
+  - if [ ! -d ~/.aws ]; then mkdir ~/.aws; fi
+  # copy content of AWS_SHARED_CREDENTIALS_FILE to ~/.aws/credentials
+  - cat "$AWS_SHARED_CREDENTIALS_FILE" > ~/.aws/credentials
+  # set permissions
+  - chmod 600 ~/.aws/credentials
   - if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_PROFILE=local;
       elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_PROFILE=testlab;
       elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_PROFILE=local;
