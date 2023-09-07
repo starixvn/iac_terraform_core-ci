@@ -12,7 +12,6 @@ include:
     #- terraform --version
     - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE"
     - cd $DIR_PATH
-    - ls -l && ls -l env/
     - aws configure list
     #- SOURCE="prod"
     #- if [ $CI_COMMIT_REF_NAME != "prod" ]; then SOURCE="test"; fi;
