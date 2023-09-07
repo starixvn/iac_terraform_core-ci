@@ -12,9 +12,10 @@ include:
     #- terraform --version
     - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE"
     - cd $DIR_PATH
+    - ls -l env/
     - aws configure list
-    #- cat .aws/config
-    #- cat .aws/credentials
+    - cat ~/.aws/config
+    - cat ~/.aws/credentials
     #- SOURCE="prod"
     #- if [ $CI_COMMIT_REF_NAME != "prod" ]; then SOURCE="test"; fi;
     - terraform init -input=false --backend-config=env/$AWS_PROFILE.conf
