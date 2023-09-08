@@ -17,20 +17,6 @@ include:
     #- if [ $CI_COMMIT_REF_NAME != "prod" ]; then SOURCE="test"; fi;
     - terraform init -input=false --backend-config=env/$AWS_PROFILE.conf
 
-# Job: Checkov | Stage: Validate
-# Purpose: Validate the Terraform configuration by applying security policies provided by Checkov
-checkov:
-  image:
-    name: bridgecrew/checkov:latest
-    entrypoint:
-      - "/usr/bin/env"
-      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-  stage: validate
-  script:
-    - checkov -d .
-  allow_failure: true
-
-
 .prepare-workspace:
   script:
     - terraform workspace select $CI_COMMIT_REF_NAME
@@ -45,13 +31,25 @@ checkov:
       changes: 
         - $RULES_CHANGES_PATH
 
-.validate:
+.validate_syntax:
   stage: validate
   script:
     - !reference [.prepare-init, script]
-    #- !reference [.checkov, script]
     - terraform validate
-  
+
+# Job: Checkov | Stage: Validate
+# Purpose: Validate the Terraform configuration by applying security policies provided by Checkov
+.validate_security:
+  image:
+    name: bridgecrew/checkov:latest
+    entrypoint:
+      - "/usr/bin/env"
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  stage: validate
+  script:
+    - checkov -d .
+  allow_failure: true
+
 .plan:
   stage: build
   script:
