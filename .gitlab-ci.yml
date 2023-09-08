@@ -53,10 +53,11 @@ include:
 .validate_security:
   stage: validate
   script:
+    - !reference [.prepare-init, script]
     - wget --no-verbose https://gitlab.nexdev.net/NEXOPS/tools/trivy-scan/-/raw/main/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz?inline=false -O - | tar -zxvf -
     - ls -l 
-    - ./trivy conf --skip-dirs="*/.terraform/*,**/.terraform/*" --exit-code 1 --severity HIGH,CRITICAL .
-    - echo "done Scan Config!"
+    - ./trivy config --exit-code 1 --severity HIGH,CRITICAL .
+    - echo completed on `date`
   allow_failure: true
 
 .plan:
