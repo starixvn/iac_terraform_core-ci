@@ -55,7 +55,7 @@ include:
   script:
     - wget --no-verbose https://gitlab.nexdev.net/NEXOPS/tools/trivy-scan/-/raw/main/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz?inline=false -O - | tar -zxvf -
     - ls -l 
-    - ./trivy conf . --skip-files "**/.terraform/**/*" --exit-code 1 --severity HIGH,CRITICAL
+    - ./trivy conf . --skip-files "*/.terraform" --exit-code 1 --severity HIGH,CRITICAL
     - echo "done Scan Config!"
   allow_failure: true
 
