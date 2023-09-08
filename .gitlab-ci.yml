@@ -57,6 +57,7 @@ include:
   script:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
-    - terraform $TF_COMMAND -var-file=env/$CI_COMMIT_REF_NAME.tfvars -input=false -auto-approve
+    #- terraform $TF_COMMAND -var-file=env/$CI_COMMIT_REF_NAME.tfvars -input=false -auto-approve
+    - terraform apply -input=false -auto-approve $PLAN
   when: manual
   allow_failure: false
