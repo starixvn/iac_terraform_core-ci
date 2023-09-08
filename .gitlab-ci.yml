@@ -19,7 +19,7 @@ include:
 
 # Job: Checkov | Stage: Validate
 # Purpose: Validate the Terraform configuration by applying security policies provided by Checkov
-.checkov:
+checkov:
   image:
     name: bridgecrew/checkov:latest
     entrypoint:
@@ -49,7 +49,7 @@ include:
   stage: validate
   script:
     - !reference [.prepare-init, script]
-    - !reference [.checkov, script]
+    #- !reference [.checkov, script]
     - terraform validate
   
 .plan:
