@@ -49,6 +49,7 @@ include:
     reports:
       terraform: ${TF_ROOT}/$DIR_PATH/${JSON_PLAN_FILE}
     paths:
+      - ${TF_ROOT}/$DIR_PATH/$PLAN
       - ${TF_ROOT}/$DIR_PATH/${JSON_PLAN_FILE}
     expire_in: 7 days
 
