@@ -10,6 +10,9 @@ variables:
   PLAN: plan.tfplan
   JSON_PLAN_FILE: tfplan.json
   TF_CLI_CONFIG_FILE: $CI_PROJECT_DIR/.terraformrc
+  TRIVY_VERSION: "0.24.2"
+  TRIVY_TOKEN: "H5nF5ywy262wt881ZWpq"
+  TRIVY_SERVER: "http://10.18.200.160:1115"
 before_script:
   - echo -e "credentials \"$CI_SERVER_HOST\" {\n  token = \"$CI_JOB_TOKEN\"\n}" > $TF_CLI_CONFIG_FILE
   - eval $(ssh-agent -s)
