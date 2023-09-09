@@ -9,7 +9,7 @@ include:
 ###########
 .prepare-init:
   script:
-    #- terraform --version
+    - terraform --version
     - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE"
     - cd $DIR_PATH
     - aws configure list
