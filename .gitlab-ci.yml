@@ -93,7 +93,7 @@ include:
   script:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
-    - terraform destroy -auto-approve
+    - terraform destroy -var-file="env/$CI_COMMIT_REF_NAME.tfvars" -auto-approve
   when: manual
   retry: 2
   allow_failure: false
