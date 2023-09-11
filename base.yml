@@ -29,9 +29,9 @@ before_script:
       elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_PROFILE=prod;
     fi;
 cache:
-  - key: $DIR_PATH-$CI_COMMIT_REF_NAME-terraform
+  - key: $DIR_PATH-$CI_COMMIT_REF_NAME-$AWS_PROFILE-terraform
     paths:
       - $DIR_PATH/.terraform
-  - key: $DIR_PATH-$CI_COMMIT_REF_NAME-terraform.lock.hcl
+  - key: $DIR_PATH-$CI_COMMIT_REF_NAME-$AWS_PROFILE-terraform.lock.hcl
     paths:
       - $DIR_PATH/.terraform.lock.hcl
