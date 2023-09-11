@@ -2,6 +2,7 @@ stages:
   - validate
   - build
   - deploy
+  - destroy
 ############
 include:
   - local: "base.yml"
@@ -85,4 +86,14 @@ include:
     #- terraform $TF_COMMAND -var-file=env/$CI_COMMIT_REF_NAME.tfvars -input=false -auto-approve
     - terraform apply -input=false -auto-approve $PLAN
   when: manual
+  allow_failure: false
+
+.destroy:
+  stage: destroy
+  script:
+    - !reference [.prepare-init, script]
+    - !reference [.prepare-workspace, script]
+    - terraform destroy -auto-approve
+  when: manual
+  retry: 2
   allow_failure: false
