@@ -10,6 +10,7 @@ include:
 ###########
 .prepare-init:
   script:
+    - ls -l
     - gitlab-terraform --version
     - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE"
     - cd $DIR_PATH
