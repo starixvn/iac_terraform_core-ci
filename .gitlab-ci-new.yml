@@ -10,18 +10,17 @@ include:
 ###########
 .prepare-init:
   script:
-    - gitlab-terraform --version
+    - terraform --version
     - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE"
     - cd $DIR_PATH
-    - ls -l
     - aws configure list
     #- SOURCE="prod"
     #- if [ $CI_COMMIT_REF_NAME != "prod" ]; then SOURCE="test"; fi;
-    - gitlab-terraform init -input=false --backend-config=env/$AWS_PROFILE.conf
+    - terraform init -input=false --backend-config=env/$AWS_PROFILE.conf
 
 .prepare-workspace:
   script:
-    - gitlab-terraform workspace select $CI_COMMIT_REF_NAME
+    - terraform workspace select $CI_COMMIT_REF_NAME
 
 .base-rules:
   rules:
@@ -37,10 +36,10 @@ include:
   stage: validate
   script:
     - !reference [.prepare-init, script]
-    - gitlab-terraform validate
+    - terraform validate
 
 # Job: Checkov | Stage: Validate
-# Purpose: Validate the gitlab-terraform configuration by applying security policies provided by Checkov
+# Purpose: Validate the Terraform configuration by applying security policies provided by Checkov
 .validate_security_checkov:
   image:
     name: bridgecrew/checkov:latest
@@ -68,8 +67,8 @@ include:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
     - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
-    - gitlab-terraform plan -var-file=env/$CI_COMMIT_REF_NAME.tfvars -out=${PLAN} # -lock=false
-    - "gitlab-terraform show -json $PLAN | convert_report > $JSON_PLAN_FILE"
+    - terraform plan -var-file=env/$CI_COMMIT_REF_NAME.tfvars -out=${PLAN} # -lock=false
+    - "terraform show -json $PLAN | convert_report > $JSON_PLAN_FILE"
   artifacts:
     name: $CI_COMMIT_REF_NAME
     reports:
@@ -84,9 +83,12 @@ include:
   script:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
-    #- gitlab-terraform $TF_COMMAND -var-file=env/$CI_COMMIT_REF_NAME.tfvars -input=false -auto-approve
-    - gitlab-terraform apply -input=false -auto-approve $PLAN
-  when: manual
+    #- terraform $TF_COMMAND -var-file=env/$CI_COMMIT_REF_NAME.tfvars -input=false -auto-approve
+    - terraform apply -input=false -auto-approve $PLAN
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "local"
+      when: manual
+    - when: always
   allow_failure: false
 
 .destroy:
@@ -94,7 +96,7 @@ include:
   script:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
-    - gitlab-terraform destroy -var-file="env/$CI_COMMIT_REF_NAME.tfvars" -auto-approve
+    - terraform destroy -var-file="env/$CI_COMMIT_REF_NAME.tfvars" -auto-approve
   rules:
     - if: $CI_COMMIT_REF_NAME != "testlab"
       when: never
