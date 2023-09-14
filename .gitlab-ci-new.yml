@@ -83,12 +83,12 @@ include:
   script:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
-    #- terraform $TF_COMMAND -var-file=env/$CI_COMMIT_REF_NAME.tfvars -input=false -auto-approve
     - terraform apply -input=false -auto-approve $PLAN
-  rules:
-    - if: $CI_COMMIT_REF_NAME == "local"
-      when: manual
-    - when: always
+  when: manual
+  # rules:
+  #   - if: $CI_COMMIT_REF_NAME == "local"
+  #     when: manual
+  #   - when: always
   allow_failure: false
 
 .destroy:
