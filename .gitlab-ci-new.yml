@@ -30,6 +30,11 @@ include:
       changes:
         - $RULES_CHANGES_PATH
 
+.merge-request-rules:
+  rules:
+    - if: $CI_PIPELINE_SOURCE != "merge_request_event"
+      when: never
+
 .validate_syntax:
   stage: validate
   script:
@@ -54,7 +59,7 @@ include:
   script:
     - !reference [.prepare-init, script]
     - wget --no-verbose https://gitlab.nexdev.net/NEXOPS/tools/trivy-scan/-/raw/main/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz?inline=false -O - | tar -zxvf -
-    - ls -l 
+    - ls -l
     - ./trivy config --exit-code 1 --severity HIGH,CRITICAL .
     - echo completed on `date`
   allow_failure: true
