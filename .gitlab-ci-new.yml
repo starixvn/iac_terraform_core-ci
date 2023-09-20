@@ -22,18 +22,13 @@ include:
 
 .base-rules:
   rules:
-    - if: $CI_COMMIT_REF_NAME != "prod" && $CI_COMMIT_REF_NAME != "local" && $CI_COMMIT_REF_NAME != "testlab" && $CI_JOB_STAGE != "validate" && $CI_PIPELINE_SOURCE != "merge_request_event"
+    - if: $CI_COMMIT_REF_NAME != "prod" && $CI_COMMIT_REF_NAME != "local" && $CI_COMMIT_REF_NAME != "testlab" && $CI_JOB_STAGE != "validate"
       when: never
     - if: ($CI_COMMIT_REF_NAME == "prod" || $CI_COMMIT_REF_NAME == "local" || $CI_COMMIT_REF_NAME == "testlab") && $CI_JOB_STAGE == "validate"
       when: never
     - if: $CI_PIPELINE_SOURCE == "push"
       changes:
         - $RULES_CHANGES_PATH
-
-.merge-request-rules:
-  rules:
-    - if: $CI_PIPELINE_SOURCE != "merge_request_event"
-      when: never
 
 .validate_syntax:
   stage: validate
