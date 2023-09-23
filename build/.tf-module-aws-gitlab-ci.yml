@@ -1,0 +1,35 @@
+stages:
+  - publish
+
+publish_terraform_module:
+  stage: publish
+  #image: curlimages/curl:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^(release)\/(([0-9]+)\.([0-9]+)\.([0-9]+)?)(-([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*))?(\+[0-9A-Za-z-]+)?$/
+      when: always # Always run this job if it is a release branch
+    - when : never # for any other branch, do not ever run this job
+  before_script:
+    - echo "Setting the path to your Terraform module."
+    - TERRAFORM_MODULE_DIR=${CI_PROJECT_DIR}
+    - echo "Terraform Module Directory - $TERRAFORM_MODULE_DIR"
+    - echo "Setting the Terraform Module Name."
+    - TERRAFORM_MODULE_NAME=${CI_PROJECT_NAME}
+    - echo "Terraform Module Name - $TERRAFORM_MODULE_NAME"
+    - echo "Setting Target Platform"
+    - TERRAFORM_TARGET_PLATFORM="aws" # or "azure" or "google" or "local"
+    - echo "Terraform Target Platform - $TERRAFORM_TARGET_PLATFORM"
+    - echo "Setting the Terraform Module Version."
+    - echo "Getting the release number from the branch name."
+    - RELEASE_NUMBER=$(echo $CI_COMMIT_BRANCH | cut -d'/' -f2)
+    - echo "Release Number - $RELEASE_NUMBER"
+    - TERRAFORM_MODULE_VERSION=${RELEASE_NUMBER}
+    - echo "Terraform Module Version - $TERRAFORM_MODULE_VERSION"
+  script:
+    - echo "Preparing the package."
+    - tar -vczf ${TERRAFORM_MODULE_NAME}-${TERRAFORM_TARGET_PLATFORM}-${TERRAFORM_MODULE_VERSION}.tgz -C ${TERRAFORM_MODULE_DIR}/src --exclude=./.git .
+    - ls -l
+    - echo "Pushing the tag to the remote repository."
+    - 'curl --fail-with-body --location --header "PRIVATE-TOKEN: ${CI_JOB_TOKEN}"
+         --upload-file ${TERRAFORM_MODULE_NAME}-${TERRAFORM_TARGET_PLATFORM}-${TERRAFORM_MODULE_VERSION}.tgz
+         ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/terraform/modules/${TERRAFORM_MODULE_NAME}/${TERRAFORM_TARGET_PLATFORM}/${TERRAFORM_MODULE_VERSION}/file'
+    - echo "Terraform module ${TERRAFORM_MODULE_NAME} version ${TERRAFORM_MODULE_VERSION} has been published to GitLab Infrastructure Registry"
