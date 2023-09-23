@@ -1,5 +1,81 @@
 stages:
+  - document
+  - release
   - publish
+
+auto-document:
+  stage: document
+  image: curlimages/curl:latest
+  rules:
+    - if: "$CI_COMMIT_BRANCH =~ /^(feature\\/)/"
+    - if: "$CI_COMMIT_BRANCH =~ /^(bugfix\\/)/"
+    - if: "$CI_COMMIT_BRANCH =~ /^(hotfix\\/)/"
+    - when: never
+  before_script:
+    - echo "Downloading Terraform Docs image"
+    - curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz
+    - tar -xzf terraform-docs.tar.gz
+    - chmod +x terraform-docs
+    - export PATH=$PATH:$PWD
+    - echo "Setting the path to your Terraform module."
+    - TERRAFORM_MODULE_NAME="${CI_PROJECT_NAME}"
+    - echo "Terraform Module Name - $TERRAFORM_MODULE_NAME"
+    - TERRAFORM_TARGET_PLATFORM="aws" # or "azure" or "google" or "local"
+    - echo "Terraform Target Platform - $TERRAFORM_TARGET_PLATFORM"
+    - PACKAGE_SOURCE="$CI_SERVER_HOST/$CI_PROJECT_ROOT_NAMESPACE/$TERRAFORM_MODULE_NAME/$TERRAFORM_TARGET_PLATFORM"
+    - echo "Package Source - $PACKAGE_SOURCE"
+  script:
+    - echo "Generating the documentation."
+    - sed -i -e 's~{{module-name}}~'"$TERRAFORM_MODULE_NAME"'~g' .docs/header.md
+    - sed -i -e 's~{{package-source}}~'"$PACKAGE_SOURCE"'~g' .docs/footer.md
+    - cp -r .docs src/
+    - terraform-docs ./src --config ./src/.docs/.terraform.docs.yml >./README.md
+  artifacts:
+    paths:
+      - ./README.md
+    expire_in: 1 day
+  allow_failure: true
+
+auto-commit:
+  stage: document
+  image: 
+    name: alpine/git:latest
+    entrypoint: [""]
+  needs: ["auto-document"]
+  rules:
+    - if: "$CI_COMMIT_BRANCH =~ /^(feature\\/)/"
+    - if: "$CI_COMMIT_BRANCH =~ /^(bugfix\\/)/"
+    - if: "$CI_COMMIT_BRANCH =~ /^(hotfix\\/)/"
+    - when: never
+  before_script:
+    - git config --global user.email "$GITLAB_USER_EMAIL"
+    - git config --global user.name "$GITLAB_USER_NAME"
+  script:
+    - git checkout $CI_COMMIT_REF_NAME
+    - git status
+    - git add README.md || true # To ensure no error is thrown if there are no changes to commit.
+    - git commit -m "[doc-job] Updating README.md" || true # To ensure no error is thrown if there are no changes to commit.
+    - git push -f https://$GITLAB_USER_NAME:$MY_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:$CI_COMMIT_REF_NAME || true
+    - echo "Commit successful"
+  allow_failure: true
+
+perform_the_release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:v0.14.0
+  rules:
+    # run only when the branch name is release/<version> where version is in the format of x.y.z
+    - if: $CI_COMMIT_BRANCH =~ /^(release)\/(([0-9]+)\.([0-9]+)\.([0-9]+)?)(-([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*))?(\+[0-9A-Za-z-]+)?$/
+    # else never run this job for any other branches
+    - when : never
+  script:
+    # get just the release number from the branch name
+    - RELEASE_NUMBER=$(echo $CI_COMMIT_BRANCH | cut -d'/' -f2)
+    - echo "Release Number - $RELEASE_NUMBER"
+    # The x.x.x in the README.md file will be replaced with the release number
+    - sed -i -e 's~x.x.x~'"$RELEASE_NUMBER"'~g' README.md
+    - >
+      release-cli create --name $RELEASE_NUMBER --description "./README.md"
+      --tag-name $RELEASE_NUMBER --ref $CI_COMMIT_SHA 
 
 publish_terraform_module:
   stage: publish

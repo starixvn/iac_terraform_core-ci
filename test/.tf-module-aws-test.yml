@@ -1,0 +1,48 @@
+stages:  
+  - test
+  - cleanup
+
+default:
+  image:
+    name: hashicorp/terraform:1.3.9
+    entrypoint:
+        - '/usr/bin/env'
+        - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
+test_the_module:
+  stage: test
+  before_script:
+    - mkdir .build/
+    - cd tests
+    - export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} # AWS_ACCESS_KEY_ID is saved as an environment variable inside Gitlab CI
+    - export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}  # AWS_SECRET_ACCESS_KEY is saved as an environment variable inside Gitlab CI
+  script:
+    - echo "Executing the tests"
+    - terraform init
+    - terraform plan -out=plan.out
+    - terraform apply -input=false plan.out
+  artifacts:
+    paths:
+      - .build/
+    expire_in: 1 day
+
+.cleanup_job: &cleanup_job
+  stage: cleanup
+  before_script:
+    - cd tests
+    - export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} # AWS_ACCESS_KEY_ID is saved as an environment variable inside Gitlab CI
+    - export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}  # AWS_SECRET_ACCESS_KEY is saved as an environment variable inside Gitlab CI
+  script:
+    - terraform init
+    - echo "Destroying the test environment..."
+    - terraform destroy --auto-approve
+  allow_failure: true
+
+cleanup_when_test_success:
+  needs: ["test_the_module"]
+  <<: *cleanup_job
+
+cleanup_when_test_fails:
+  needs: ["test_the_module"]
+  when: on_failure
+  <<: *cleanup_job
