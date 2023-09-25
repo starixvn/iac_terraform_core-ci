@@ -83,10 +83,6 @@ include:
     - !reference [.prepare-workspace, script]
     - terraform apply -input=false -auto-approve $PLAN
   when: manual
-  # rules:
-  #   - if: $CI_COMMIT_REF_NAME == "local"
-  #     when: manual
-  #   - when: always
   allow_failure: false
 
 .destroy:
