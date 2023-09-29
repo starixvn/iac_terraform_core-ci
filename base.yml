@@ -20,7 +20,7 @@ before_script:
   - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
   - git config --global user.email "ansible@nexdev.net"
   - git config --global user.name "ansible"
-  - echo -e "${SSH_PRIVATE_KEY_1}\n${SSH_PRIVATE_KEY_2}\n${SSH_PRIVATE_KEY_3}" | ssh-add -
+  #- echo -e "${SSH_PRIVATE_KEY_1}\n${SSH_PRIVATE_KEY_2}\n${SSH_PRIVATE_KEY_3}" | ssh-add -
   - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
   - if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_PROFILE=testlab;
       elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_PROFILE=testlab;
