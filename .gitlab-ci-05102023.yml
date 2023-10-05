@@ -1,4 +1,5 @@
 stages:
+  - code-quality
   - validate
   - build
   - deploy
@@ -10,18 +11,15 @@ include:
 ###########
 .prepare-init:
   script:
-    - gitlab-terraform --version
+    - terraform --version
     - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE"
     - cd $DIR_PATH
-    - ls -l
     - aws configure list
-    #- SOURCE="prod"
-    #- if [ $CI_COMMIT_REF_NAME != "prod" ]; then SOURCE="test"; fi;
-    - gitlab-terraform init -input=false --backend-config=env/$AWS_PROFILE.conf
+    - terraform init -input=false --backend-config=env/$AWS_PROFILE.conf
 
 .prepare-workspace:
   script:
-    - gitlab-terraform workspace select $CI_COMMIT_REF_NAME
+    - terraform workspace select $CI_COMMIT_REF_NAME
 
 .base-rules:
   rules:
@@ -33,27 +31,56 @@ include:
       changes:
         - $RULES_CHANGES_PATH
 
+terraform_lint:
+  stage: code-quality
+  image:
+    name: wata727/tflint:0.15.5
+    entrypoint:
+      - env
+  script:
+    - tflint
+
+terraform_fmt:
+  stage: code-quality
+  script:
+    - terraform fmt -check
+
+yaml_lint:
+  stage: code-quality
+  image:
+    name: cytopia/yamllint:1.20
+    entrypoint:
+      - env
+  script:
+    - yamllint .
+
+markdown_lint:
+  stage: code-quality
+  image: pipelinecomponents/markdownlint:6ff4ccf
+  script:
+    - mdl --style all --warnings .
+
 .validate_syntax:
   stage: validate
   script:
     - !reference [.prepare-init, script]
-    - gitlab-terraform validate
+    - terraform validate
 
 # Job: Checkov | Stage: Validate
-# Purpose: Validate the gitlab-terraform configuration by applying security policies provided by Checkov
+# Purpose: Validate the Terraform configuration by applying security policies provided by Checkov
 .validate_security_checkov:
   image:
     name: bridgecrew/checkov:latest
     entrypoint:
       - "/usr/bin/env"
       - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-  stage: validate
+  stage: code-quality
   script:
     - checkov -d .
   allow_failure: true
 
 .validate_security:
-  stage: validate
+  stage: code-quality
   script:
     - !reference [.prepare-init, script]
     - wget --no-verbose https://gitlab.nexdev.net/NEXOPS/tools/trivy-scan/-/raw/main/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz?inline=false -O - | tar -zxvf -
@@ -68,8 +95,8 @@ include:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
     - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
-    - gitlab-terraform plan -var-file=env/$CI_COMMIT_REF_NAME.tfvars -out=${PLAN} # -lock=false
-    - "gitlab-terraform show -json $PLAN | convert_report > $JSON_PLAN_FILE"
+    - terraform plan -var-file=env/$CI_COMMIT_REF_NAME.tfvars -out=${PLAN} # -lock=false
+    - "terraform show -json $PLAN | convert_report > $JSON_PLAN_FILE"
   artifacts:
     name: $CI_COMMIT_REF_NAME
     reports:
@@ -84,8 +111,8 @@ include:
   script:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
-    #- gitlab-terraform $TF_COMMAND -var-file=env/$CI_COMMIT_REF_NAME.tfvars -input=false -auto-approve
-    - gitlab-terraform apply -input=false -auto-approve $PLAN
+    #- terraform $TF_COMMAND -var-file=env/$CI_COMMIT_REF_NAME.tfvars -input=false -auto-approve
+    - terraform apply -input=false -auto-approve $PLAN
   when: manual
   allow_failure: false
 
@@ -94,7 +121,7 @@ include:
   script:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
-    - gitlab-terraform destroy -var-file="env/$CI_COMMIT_REF_NAME.tfvars" -auto-approve
+    - terraform destroy -var-file="env/$CI_COMMIT_REF_NAME.tfvars" -auto-approve
   rules:
     - if: $CI_COMMIT_REF_NAME != "testlab"
       when: never
