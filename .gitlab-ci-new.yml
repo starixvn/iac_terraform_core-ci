@@ -1,4 +1,17 @@
+---
+#################################################
+# Requirements:                                 #
+#   define the following secrets:               #
+#     AWS_DEFAULT_REGION                        #
+#     AWS_ACCESS_KEY_ID                         #
+#     AWS_SECRET_ACCESS_KEY                     #
+#################################################
+
+#############################
+# global definitions - init #
+#############################
 stages:
+  - code-quality
   - validate
   - build
   - deploy
@@ -6,8 +19,12 @@ stages:
 ############
 include:
   - local: "base.yml"
+############################
+# global definitions - end #
+########################
 
-###########
+# job templates - init #
+########################
 .prepare-init:
   script:
     - terraform --version
@@ -18,7 +35,8 @@ include:
 
 .prepare-workspace:
   script:
-    - terraform workspace select $CI_COMMIT_REF_NAME
+    - (terraform workspace select ${CI_COMMIT_REF_NAME} ||
+      terraform workspace new ${CI_COMMIT_REF_NAME})
 
 .base-rules:
   rules:
@@ -29,6 +47,35 @@ include:
     - if: $CI_PIPELINE_SOURCE == "push"
       changes:
         - $RULES_CHANGES_PATH
+
+.terraform_lint:
+  stage: code-quality
+  image:
+    name: wata727/tflint:0.15.5
+    entrypoint:
+      - env
+  script:
+    - tflint
+
+.terraform_fmt:
+  stage: code-quality
+  script:
+    - terraform fmt -check
+
+.yaml_lint:
+  stage: code-quality
+  image:
+    name: cytopia/yamllint:1.20
+    entrypoint:
+      - env
+  script:
+    - yamllint .
+
+.markdown_lint:
+  stage: code-quality
+  image: pipelinecomponents/markdownlint:6ff4ccf
+  script:
+    - mdl --style all --warnings .
 
 .validate_syntax:
   stage: validate
@@ -84,6 +131,12 @@ include:
     - terraform apply -input=false -auto-approve $PLAN
   when: manual
   allow_failure: false
+
+##############################################################
+#                       DANGER ZONE!                         #
+# this job will destroy your infrastructure                  #
+# use it only if you need to remove your Terraform resources #
+##############################################################
 
 .destroy:
   stage: destroy
