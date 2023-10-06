@@ -64,7 +64,7 @@ include:
 .terraform_lint:
   stage: code-quality
   image:
-    name: wata727/tflint:0.15.5
+    name: wata727/tflint:0.29.1
     entrypoint:
       - env
   script:
@@ -78,7 +78,7 @@ include:
 .yaml_lint:
   stage: code-quality
   image:
-    name: cytopia/yamllint:1.20
+    name: cytopia/yamllint:1
     entrypoint:
       - env
   script:
