@@ -13,21 +13,20 @@ variables:
   TRIVY_VERSION: "0.24.2"
   TRIVY_TOKEN: "H5nF5ywy262wt881ZWpq"
   TRIVY_SERVER: "http://10.18.200.160:1115"
-before_script:
-  - echo -e "credentials \"$CI_SERVER_HOST\" {\n  token = \"$CI_JOB_TOKEN\"\n}" > $TF_CLI_CONFIG_FILE
-  - eval $(ssh-agent -s)
-  - mkdir -p ~/.ssh
-  - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-  - git config --global user.email "ansible@nexdev.net"
-  - git config --global user.name "ansible"
-  #- echo -e "${SSH_PRIVATE_KEY_1}\n${SSH_PRIVATE_KEY_2}\n${SSH_PRIVATE_KEY_3}" | ssh-add -
-  - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
-  - if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_PROFILE=testlab;
-      elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_PROFILE=testlab;
-      elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_PROFILE=local;
-      elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export AWS_PROFILE=uat;
-      elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_PROFILE=prod;
-    fi;
+# before_script:
+#   - echo -e "credentials \"$CI_SERVER_HOST\" {\n  token = \"$CI_JOB_TOKEN\"\n}" > $TF_CLI_CONFIG_FILE
+#   - eval $(ssh-agent -s)
+#   - mkdir -p ~/.ssh
+#   - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+#   - git config --global user.email "ansible@nexdev.net"
+#   - git config --global user.name "ansible"
+#   - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
+#   - if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_PROFILE=testlab;
+#       elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_PROFILE=testlab;
+#       elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_PROFILE=local;
+#       elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export AWS_PROFILE=uat;
+#       elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_PROFILE=prod;
+#     fi;
 cache:
   - key: $DIR_PATH-$CI_COMMIT_REF_NAME-$AWS_PROFILE-terraform
     paths:
