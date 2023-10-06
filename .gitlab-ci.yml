@@ -53,9 +53,9 @@ include:
 
 .base-rules:
   rules:
-    - if: $CI_COMMIT_REF_NAME != "prod" && $CI_COMMIT_REF_NAME != "uat" && $CI_COMMIT_REF_NAME != "local" && $CI_COMMIT_REF_NAME != "testlab" && ($CI_JOB_STAGE != "validate" || $CI_JOB_STAGE != "code-quality")
+    - if: $CI_COMMIT_REF_NAME != "prod" && $CI_COMMIT_REF_NAME != "uat" && $CI_COMMIT_REF_NAME != "local" && $CI_COMMIT_REF_NAME != "testlab" && ($CI_JOB_STAGE != "validate" && $CI_JOB_STAGE != "code-quality")
       when: never
-    - if: ($CI_COMMIT_REF_NAME == "prod" || $CI_COMMIT_REF_NAME == "uat" || $CI_COMMIT_REF_NAME == "local" || $CI_COMMIT_REF_NAME == "testlab") && ($CI_JOB_STAGE == "validate" || $CI_JOB_STAGE == "code-quality")
+    - if: ($CI_COMMIT_REF_NAME == "prod" || $CI_COMMIT_REF_NAME == "uat" || $CI_COMMIT_REF_NAME == "local" || $CI_COMMIT_REF_NAME == "testlab") && ($CI_JOB_STAGE == "validate" && $CI_JOB_STAGE == "code-quality")
       when: never
     - if: $CI_PIPELINE_SOURCE == "push"
       changes:
