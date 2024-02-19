@@ -13,12 +13,25 @@
 stages:
   - code-quality
   - validate
-  - build
-  - deploy
-  - destroy
+  - build_vpc
+  - deploy_vpc
+  - build_sg
+  - deploy_sg
+  - build_bastion
+  - deploy_bastion
+  - build_ec2
+  - deploy_ec2
+  - build_lb
+  - deploy_lb
+  - destroy_lb
+  - destroy_ec2
+  - destroy_bastion
+  - destroy_sg
+  - destroy_vpc
 ############
 include:
   - local: "base.yml"
+  - local: "common.gitlab-ci.yml"
 ############################
 # global definitions - end #
 ########################
