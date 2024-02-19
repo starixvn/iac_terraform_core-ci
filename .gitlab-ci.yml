@@ -31,7 +31,6 @@ stages:
 ############
 include:
   - local: "base.yml"
-  - local: "common.gitlab-ci.yml"
 ############################
 # global definitions - end #
 ########################
