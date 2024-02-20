@@ -21,6 +21,7 @@ stages:
   - deploy_ec2
   - build_lb
   - deploy_lb
+  - clean_lab
   - destroy_lb
   - destroy_ec2
   - destroy_sg_iam
@@ -161,13 +162,23 @@ include:
 # use it only if you need to remove your Terraform resources #
 ##############################################################
 
+.clean:
+  stage: clean_lab
+  script:
+    - echo ...
+  when: manual
+  rules:
+    - if: $CI_COMMIT_REF_NAME != "testlab"
+      when: never
+  allow_failure: false
+
 .destroy:
   stage: destroy
   script:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
     - terraform destroy -var-file="env/$CI_COMMIT_REF_NAME.tfvars" -auto-approve
-  when: manual
+  #when: manual
   rules:
     - if: $CI_COMMIT_REF_NAME != "testlab"
       when: never
