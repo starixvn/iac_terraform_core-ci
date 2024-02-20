@@ -17,15 +17,12 @@ stages:
   - deploy_vpc
   - build_sg_iam
   - deploy_sg_iam
-  - build_bastion
-  - deploy_bastion
   - build_ec2
   - deploy_ec2
   - build_lb
   - deploy_lb
   - destroy_lb
   - destroy_ec2
-  - destroy_bastion
   - destroy_sg_iam
   - destroy_vpc
 ############
