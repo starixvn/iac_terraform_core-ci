@@ -182,4 +182,6 @@ include:
   rules:
     - if: $CI_COMMIT_REF_NAME != "testlab"
       when: never
+    - if: $CI_COMMIT_REF_NAME == "testlab"
+      needs: [".clean"]
   allow_failure: false
