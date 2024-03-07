@@ -21,8 +21,11 @@ stages:
   - deploy_ec2
   - build_lb
   - deploy_lb
+  - build_eks
+  - deploy_eks
   - destroy_lb
   - destroy_ec2
+  - destroy_eks
   - destroy_sg_iam
   - destroy_vpc
 ############
