@@ -71,7 +71,7 @@ include:
       aws sts get-caller-identity
     - terraform --version
     - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE"
-    - cd $DIR_PATH
+    - cd / && cd $DIR_PATH
     - aws configure list
     - terraform init -input=false --backend-config=env/$AWS_PROFILE.conf
 
