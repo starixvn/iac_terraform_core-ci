@@ -49,11 +49,11 @@ include:
     - git config --global user.email "ansible@nexdev.net"
     - git config --global user.name "ansible"
     - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
-    - if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_PROFILE=testlab;
-        elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_PROFILE=testlab;
-        elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_PROFILE=local;
-        elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export AWS_PROFILE=uat;
-        elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_PROFILE=prod;
+    - if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_ENV=testlab;
+        elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_ENV=testlab;
+        elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_ENV=local;
+        elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export AWS_ENV=uat;
+        elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_ENV=prod;
       fi;
     - |
       echo "** Getting AWS credentials"
@@ -68,10 +68,10 @@ include:
       export AWS_DEFAULT_REGION="ap-northeast-1"
       aws sts get-caller-identity
     - terraform --version
-    - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE"
+    - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_ENV"
     - cd $DIR_PATH
     - aws configure list
-    - terraform init -input=false --backend-config=env/$AWS_PROFILE.conf
+    - terraform init -input=false --backend-config=env/$AWS_ENV.conf
 
 .prepare-workspace:
   script:
