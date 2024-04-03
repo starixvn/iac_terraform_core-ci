@@ -13,6 +13,10 @@ variables:
   TRIVY_VERSION: "0.24.2"
   TRIVY_TOKEN: "H5nF5ywy262wt881ZWpq"
   TRIVY_SERVER: "http://10.18.200.160:1115"
+  ###
+  VAULT_VERSION: 1.15.2 #1.6.2
+  TF_VAR_vault_role: tf-vault-pipeline
+  TF_VAR_vault_backend: tf-vault-aws
 
 cache:
   - key: $DIR_PATH-$CI_COMMIT_REF_NAME-$AWS_PROFILE-terraform

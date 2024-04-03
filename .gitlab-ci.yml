@@ -42,6 +42,9 @@ include:
 ########################
 .prepare-init:
   script:
+    - cd /usr/local/bin/
+    - curl https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_386.zip --output vault.zip
+    - unzip vault.zip
     - echo -e "credentials \"$CI_SERVER_HOST\" {\n  token = \"$CI_JOB_TOKEN\"\n}" > $TF_CLI_CONFIG_FILE
     - eval $(ssh-agent -s)
     - mkdir -p ~/.ssh
@@ -49,12 +52,23 @@ include:
     - git config --global user.email "ansible@nexdev.net"
     - git config --global user.name "ansible"
     - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
-    - if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_PROFILE=testlab;
-        elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_PROFILE=testlab;
-        elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_PROFILE=local;
-        elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export AWS_PROFILE=uat;
-        elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_PROFILE=prod;
-      fi;
+    #- if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_PROFILE=testlab;
+    #    elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_PROFILE=testlab;
+    #    elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_PROFILE=local;
+    #    elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export AWS_PROFILE=uat;
+    #    elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_PROFILE=prod;
+    #  fi;
+    - |
+      echo "** Getting AWS credentials"
+      export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=$TF_VAR_vault_role jwt=$CI_JOB_JWT)"
+      vault token lookup
+      export CREDS=$(vault write -format=json tf-vault-aws/sts/tf-vault-pipeline ttl=20m)
+      export AWS_ACCESS_KEY_ID=$(echo ${CREDS} | jq -r .data.access_key)
+      echo $AWS_ACCESS_KEY_ID
+      export AWS_SECRET_ACCESS_KEY=$(echo ${CREDS} | jq -r .data.secret_key)
+      export AWS_SESSION_TOKEN=$(echo ${CREDS} | jq -r .data.security_token)
+      export AWS_DEFAULT_REGION="ap-northeast-1"
+      aws sts get-caller-identity
     - terraform --version
     - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE"
     - cd $DIR_PATH
