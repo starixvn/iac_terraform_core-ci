@@ -17,7 +17,7 @@ variables:
   VAULT_ADDR: https://vault.lumigame.com
   VAULT_VERSION: 1.15.2 #1.6.2
   TF_VAR_vault_role: tf-vault-pipeline
-  TF_VAR_vault_backend: tf-vault-aws
+  TF_VAR_vault_backend: aws-local
 
 cache:
   - key: $DIR_PATH-$CI_COMMIT_REF_NAME-$AWS_PROFILE-terraform
