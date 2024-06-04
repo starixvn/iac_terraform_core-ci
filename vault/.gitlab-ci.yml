@@ -1,4 +1,8 @@
-image: bash
+image:
+  name: $DOCKER_REG_LOCAL_URL/base/hashicorp/terraform:1.4.5-vault
+  entrypoint:
+      - "/usr/bin/env"
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 stages:
   - test
@@ -12,13 +16,13 @@ variables:
   TF_VAR_vault_backend: web-aws
 
 before_script:
-  - apk --update add curl unzip bash
-  - cd /usr/local/bin/
-  - curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_386.zip --output terraform.zip
-  - unzip terraform.zip
-  - curl https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_386.zip --output vault.zip
-  - unzip vault.zip
-  - cd -
+  #- apk --update add curl unzip bash
+  #- cd /usr/local/bin/
+  #- curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_386.zip --output terraform.zip
+  #- unzip terraform.zip
+  #- curl https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_386.zip --output vault.zip
+  #- unzip vault.zip
+  #- cd -
   - terraform version
   - vault version
 
