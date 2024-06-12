@@ -42,7 +42,7 @@ include:
       fi;
     - echo "$CI_PROJECT_NAME - $CI_PROJECT_ID - $ORG - $CI_PROJECT_PATH - $GIT_URL";
     - terraform --version
-    - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE"
+    - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE - $TF_VAR_vault_role - $CI_JOB_JWT"
     - cd $DIR_PATH
     - aws configure list
     - |
