@@ -40,16 +40,16 @@ include:
         elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export AWS_PROFILE=uat;
         elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_PROFILE=prod;
       fi;
-    - echo "$CI_PROJECT_NAME - $ORG - $CI_PROJECT_PATH - $GIT_URL";
+    - echo "$CI_PROJECT_NAME - $CI_PROJECT_ID - $ORG - $CI_PROJECT_PATH - $GIT_URL";
+    - terraform --version
+    - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE"
+    - cd $DIR_PATH
+    - aws configure list
     - |
         echo "** Getting credentials"
         vault --version
         export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=$TF_VAR_vault_role jwt=$CI_JOB_JWT)"
         vault token lookup
-    - terraform --version
-    - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE"
-    - cd $DIR_PATH
-    - aws configure list
     - terraform init -input=false --backend-config=env/$AWS_PROFILE.conf
 
 .prepare-workspace:
