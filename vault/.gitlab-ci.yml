@@ -35,13 +35,13 @@ stages:
     - git config --global user.name "ansible"
     - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
     - if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_PROFILE=local;
-        elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_PROFILE=testlab;VAULT_ADDR="http://10.70.70.142:8200";
-        elif echo $CI_COMMIT_REF_NAME | grep -q "dev"; then export AWS_PROFILE=dev;VAULT_ADDR="https://vault-dev.nexdev.net";
-        elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_PROFILE=local;VAULT_ADDR="https://vault.nexdev.net";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_PROFILE=testlab;export VAULT_ADDR="http://10.70.70.142:8200";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "dev"; then export AWS_PROFILE=dev;export VAULT_ADDR="https://vault-dev.nexdev.net";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_PROFILE=local;export VAULT_ADDR="https://vault.nexdev.net";
         elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export AWS_PROFILE=uat;
         elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_PROFILE=prod;
       fi;
-    - echo "$CI_PROJECT_NAME - $CI_PROJECT_ID - $ORG - $CI_PROJECT_PATH - $GIT_URL";
+    - echo "$CI_PROJECT_NAME - $CI_PROJECT_ID - $ORG - $CI_PROJECT_PATH - $VAULT_ADDR";
     - terraform --version
     - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $AWS_PROFILE - $TF_VAR_vault_role - $CI_JOB_JWT"
     - cd $DIR_PATH
