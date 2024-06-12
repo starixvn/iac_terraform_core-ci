@@ -34,7 +34,7 @@ stages:
     - git config --global user.email "ansible@nexdev.net"
     - git config --global user.name "ansible"
     - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
-    - if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_PROFILE=local;
+    - if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_PROFILE=local;export VAULT_ADDR="https://vault-dev.nexdev.net";
         elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_PROFILE=testlab;export VAULT_ADDR="http://10.70.70.142:8200";
         elif echo $CI_COMMIT_REF_NAME | grep -q "dev"; then export AWS_PROFILE=dev;export VAULT_ADDR="https://vault-dev.nexdev.net";
         elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_PROFILE=local;export VAULT_ADDR="https://vault.nexdev.net";
