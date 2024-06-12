@@ -1,0 +1,28 @@
+image:
+  name: $DOCKER_REG_LOCAL_URL/base/hashicorp/terraform:1.4.5-vault
+  entrypoint:
+      - "/usr/bin/env"
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+variables:
+  RULES_CHANGES_PATH: "**/*"
+  TF_ROOT: ${CI_PROJECT_DIR}
+  PLAN: plan.tfplan
+  JSON_PLAN_FILE: tfplan.json
+  TF_CLI_CONFIG_FILE: $CI_PROJECT_DIR/.terraformrc
+  TRIVY_VERSION: $TRIVY_VERSION
+  TRIVY_TOKEN: $TRIVY_TOKEN
+  TRIVY_SERVER: $TRIVY_SERVER
+  ###
+  VAULT_ADDR: https://vault.nexdev.net
+  VAULT_VERSION: 1.6.2
+  TF_VAR_vault_role: vault_jwt_auth_backend-pipeline
+  DIR_PATH: "starix"
+
+cache:
+  - key: $DIR_PATH-vault-$AWS_PROFILE-terraform
+    paths:
+      - $DIR_PATH/.terraform
+  - key: $DIR_PATH-vault-$AWS_PROFILE-terraform.lock.hcl
+    paths:
+      - $DIR_PATH/.terraform.lock.hcl
