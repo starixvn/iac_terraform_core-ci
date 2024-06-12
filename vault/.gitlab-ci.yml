@@ -17,8 +17,8 @@ stages:
   - deploy_starix
   - destroy_starix
 ############
-include:
-  - local: "base.yml"
+#include:
+#  - local: "base.yml"
 ############################
 # global definitions - end #
 ########################
