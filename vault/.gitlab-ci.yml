@@ -17,8 +17,16 @@ stages:
   - deploy
   - destroy
 ############
-#include:
+include:
+  - project: "iac/terraform/core-ci"
+    ref: demo
+    file: "vault/vault-rules.gitlab-ci.yml"
+  - project: "iac/terraform/core-ci"
+    ref: demo
+    file: "vault/base.yml"
+  
 #  - local: "base.yml"
+
 ############################
 # global definitions - end #
 ########################

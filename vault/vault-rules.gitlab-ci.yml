@@ -1,0 +1,10 @@
+workflow:
+  rules:
+###NEXCEL
+    - if: '($CI_PROJECT_ID == "2660")'
+      variables:
+        ORG: "nexcel"
+###LUMI
+    - if: '($CI_PROJECT_ID == "2702")'
+      variables:
+        ORG: "luminet"
