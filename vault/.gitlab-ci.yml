@@ -44,19 +44,19 @@ include:
     - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
     - if [ "$ORG" == "nexcel" ];
       then
-        if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export VAULT_ADDR="https://vault-dev.nexdev.net";
-        elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export VAULT_ADDR="http://10.70.70.142:8200";
-        elif echo $CI_COMMIT_REF_NAME | grep -q "dev"; then export VAULT_ADDR="https://vault-dev.nexdev.net";
-        elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export VAULT_ADDR="https://vault.nexdev.net";
-        elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export VAULT_ADDR="https://vault.uat";
-        elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export VAULT_ADDR="https://vault.prod";
+        if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export VAULT_ENV="dev"; export VAULT_ADDR="https://vault-dev.nexdev.net";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export VAULT_ENV="testlab"; export VAULT_ADDR="http://10.70.70.142:8200";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "dev"; then export VAULT_ENV="dev"; export VAULT_ADDR="https://vault-dev.nexdev.net";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export VAULT_ENV="local"; export VAULT_ADDR="https://vault.nexdev.net";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export VAULT_ENV="uat"; export VAULT_ADDR="https://vault.uat";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export VAULT_ENV="prod"; export VAULT_ADDR="https://vault.prod";
         fi;
       elif [ "$ORG" == "luminet" ];
       then
-        if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export VAULT_ADDR="https://vault.lumigame.com";
-        elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export VAULT_ADDR="https://vault.lumigame.com";
-        elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export VAULT_ADDR="https://vault.uat";
-        elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export VAULT_ADDR="https://vault.prod";
+        if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export VAULT_ENV="local"; export VAULT_ADDR="https://vault.lumigame.com";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export VAULT_ENV="local"; export VAULT_ADDR="https://vault.lumigame.com";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export VAULT_ENV="uat"; export VAULT_ADDR="https://vault.uat";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export VAULT_ENV="prod"; export VAULT_ADDR="https://vault.prod";
         fi;
       fi;
 
