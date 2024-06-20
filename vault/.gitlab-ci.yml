@@ -13,12 +13,9 @@
 stages:
   - code-quality
   - validate
-  - build_starix
-  - build_lumi
-  - deploy_starix
-  - deploy_lumi
-  - destroy_starix
-  - destroy_lumi
+  - build
+  - deploy
+  - destroy
 ############
 #include:
 #  - local: "base.yml"
