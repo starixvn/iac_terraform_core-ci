@@ -64,7 +64,8 @@ include:
     - terraform --version
     - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $VAULT_ENV - $TF_VAR_vault_role - $CI_JOB_JWT"
     - cd $DIR_PATH
-    #- aws configure list
+    - export AWS_PROFILE=$VAULT_ENV
+    - aws configure list
     - |
         echo "** Getting credentials"
         vault --version
