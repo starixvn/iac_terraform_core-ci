@@ -72,8 +72,8 @@ include:
 
 .prepare-workspace:
   script:
-    - terraform workspace new ${CI_COMMIT_REF_NAME} ||
-      terraform workspace select ${CI_COMMIT_REF_NAME}
+    - (terraform workspace new ${CI_COMMIT_REF_NAME}) ||
+      (terraform workspace select ${CI_COMMIT_REF_NAME})
 
 .base-rules:
   rules:
