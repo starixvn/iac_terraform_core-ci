@@ -17,7 +17,7 @@ variables:
   VAULT_ADDR: https://vault.nexdev.net
   VAULT_VERSION: 1.15.2 #1.6.2
   TF_VAR_vault_role: tf-aws-auth-role-pipeline
-  TF_VAR_vault_backend: aws-local
+  TF_VAR_vault_backend: aws_local
 
 cache:
   - key: $DIR_PATH-$CI_COMMIT_REF_NAME-$AWS_PROFILE-terraform
