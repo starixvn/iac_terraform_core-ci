@@ -123,16 +123,16 @@ include:
 
 # Job: Checkov | Stage: Validate
 # Purpose: Validate the Terraform configuration by applying security policies provided by Checkov
-.validate_security_checkov:
-  image:
-    name: bridgecrew/checkov:latest
-    entrypoint:
-      - "/usr/bin/env"
-      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-  stage: validate
-  script:
-    - checkov -d .
-  allow_failure: true
+# .validate_security_checkov:
+#   image:
+#     name: bridgecrew/checkov:latest
+#     entrypoint:
+#       - "/usr/bin/env"
+#       - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+#   stage: validate
+#   script:
+#     - checkov -d .
+#   allow_failure: true
 
 .validate_security:
   stage: validate
