@@ -20,9 +20,9 @@ variables:
   TF_VAR_vault_backend: aws_local
 
 cache:
-  - key: $DIR_PATH-$CI_COMMIT_REF_NAME-$AWS_PROFILE-terraform
+  - key: $DIR_PATH-$CI_COMMIT_REF_NAME-terraform
     paths:
       - $DIR_PATH/.terraform
-  - key: $DIR_PATH-$CI_COMMIT_REF_NAME-$AWS_PROFILE-terraform.lock.hcl
+  - key: $DIR_PATH-$CI_COMMIT_REF_NAME-terraform.lock.hcl
     paths:
       - $DIR_PATH/.terraform.lock.hcl
