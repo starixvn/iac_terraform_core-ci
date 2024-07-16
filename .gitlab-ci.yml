@@ -49,14 +49,14 @@ include:
 
 .prepare-auth:
   script:
-    - if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_ENV=testlab;
+    - |
+      if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_ENV=testlab;
         elif echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_ENV=testlab;export VAULT_ADDR="https://vault.nexdev.net";
         elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_ENV=testlab;export VAULT_ADDR="https://vault.nexdev.net";
         elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_ENV=local; export VAULT_ADDR="https://vault.nexdev.net";
         elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export AWS_ENV=uat;
         elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_ENV=prod;
       fi;
-    - |
       echo "** Getting AWS credentials - Vault: $VAULT_ADDR"
       vault --version
       export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=$TF_VAR_vault_role jwt=$CI_JOB_JWT)"
