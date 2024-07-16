@@ -37,14 +37,14 @@ include:
 
 # job templates - init #
 ########################
-.prepare-init:
-  script:
-    - eval $(ssh-agent -s)
-    - mkdir -p ~/.ssh
-    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-    - git config --global user.email "ansible@nexdev.net"
-    - git config --global user.name "ansible"
-    - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
+# .prepare-init:
+#   script:
+#     - eval $(ssh-agent -s)
+#     - mkdir -p ~/.ssh
+#     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+#     - git config --global user.email "ansible@nexdev.net"
+#     - git config --global user.name "ansible"
+#     - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
 
 .prepare-auth:
   script:
@@ -122,7 +122,7 @@ include:
   stage: validate
   script:
     #- !reference [.prepare-init, script]
-    - !reference [.prepare-auth, script]
+    #- !reference [.prepare-auth, script]
     - terraform validate
 
 # .vault_auth:
