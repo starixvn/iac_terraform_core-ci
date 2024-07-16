@@ -17,6 +17,7 @@ variables:
   VAULT_ADDR: https://vault.nexdev.net
   #VAULT_VERSION: 1.15.2 #1.6.2
   TF_VAR_vault_role: gitlab-aws-auth-ci
+  TF_VAR_vault_assumed: vault-aws-assumed-role
   TF_VAR_vault_backend: aws_local
 
 cache:
