@@ -57,7 +57,7 @@ include:
         elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_ENV=prod;
       fi;
     - |
-      echo "** Getting AWS credentials"
+      echo "** Getting AWS credentials - Vault: $VAULT_ADDR"
       vault --version
       export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=$TF_VAR_vault_role jwt=$CI_JOB_JWT)"
       vault token lookup
