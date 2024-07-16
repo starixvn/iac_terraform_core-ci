@@ -50,10 +50,9 @@ include:
 .prepare-auth:
   script:
     - |
-      if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_ENV=testlab;
-        elif echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_ENV=testlab; export VAULT_ADDR=https://vault.nexdev.net;
-        elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_ENV=testlab; export VAULT_ADDR=https://vault.nexdev.net;
-        elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_ENV=local; export VAULT_ADDR=https://vault.nexdev.net;
+      if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_ENV=testlab; export VAULT_ADDR="https://vault.nexdev.net";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_ENV=testlab; export VAULT_ADDR="https://vault.nexdev.net";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_ENV=local; export VAULT_ADDR="https://vault.nexdev.net";
         elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export AWS_ENV=uat;
         elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_ENV=prod;
       fi;
