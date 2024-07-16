@@ -46,15 +46,16 @@ include:
     - git config --global user.email "ansible@nexdev.net"
     - git config --global user.name "ansible"
     - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
+
+.prepare-auth:
+  script:
     - if echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_ENV=testlab;
+        elif echo $CI_COMMIT_REF_NAME | grep -q "main"; then export AWS_ENV=testlab;export VAULT_ADDR="https://vault.nexdev.net";
         elif echo $CI_COMMIT_REF_NAME | grep -q "testlab"; then export AWS_ENV=testlab;export VAULT_ADDR="https://vault.nexdev.net";
         elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export AWS_ENV=local; export VAULT_ADDR="https://vault.nexdev.net";
         elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export AWS_ENV=uat;
         elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_ENV=prod;
       fi;
-
-.prepare-auth:
-  script:
     - |
       echo "** Getting AWS credentials"
       vault --version
