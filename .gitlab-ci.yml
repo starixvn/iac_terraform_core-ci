@@ -52,6 +52,9 @@ include:
         elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export AWS_ENV=uat;
         elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export AWS_ENV=prod;
       fi;
+
+.prepare-auth:
+  script:
     - |
       echo "** Getting AWS credentials"
       vault --version
@@ -119,7 +122,14 @@ include:
   stage: validate
   script:
     - !reference [.prepare-init, script]
+    - !reference [.prepare-auth, script]
     - terraform validate
+
+# .vault_auth:
+#   stage: validate
+#   script:
+#     - !reference [.prepare-init, script]
+#     - terraform validate
 
 # Job: Checkov | Stage: Validate
 # Purpose: Validate the Terraform configuration by applying security policies provided by Checkov
