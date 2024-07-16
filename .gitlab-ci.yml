@@ -121,7 +121,7 @@ include:
 .validate_syntax:
   stage: validate
   script:
-    - !reference [.prepare-init, script]
+    #- !reference [.prepare-init, script]
     - !reference [.prepare-auth, script]
     - terraform validate
 
@@ -147,7 +147,7 @@ include:
 .validate_security:
   stage: validate
   script:
-    - !reference [.prepare-init, script]
+    #- !reference [.prepare-init, script]
     - wget --no-verbose https://gitlab.nexdev.net/NEXOPS/tools/trivy-scan/-/raw/main/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz?inline=false -O - | tar -zxvf -
     - ls -l
     - ./trivy config --exit-code 1 --severity HIGH,CRITICAL .
@@ -157,7 +157,7 @@ include:
 .plan:
   stage: build
   script:
-    - !reference [.prepare-init, script]
+    - !reference [.prepare-auth, script]
     - !reference [.prepare-workspace, script]
     - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
     - terraform plan -var-file=env/$CI_COMMIT_REF_NAME.tfvars -out=${PLAN} # -lock=false
@@ -174,7 +174,7 @@ include:
 .apply:
   stage: deploy
   script:
-    - !reference [.prepare-init, script]
+    - !reference [.prepare-auth, script]
     - !reference [.prepare-workspace, script]
     - terraform apply -input=false -auto-approve $PLAN
   #when: manual
@@ -189,7 +189,7 @@ include:
 .destroy:
   stage: destroy
   script:
-    - !reference [.prepare-init, script]
+    - !reference [.prepare-auth, script]
     - !reference [.prepare-workspace, script]
     - terraform destroy -var-file="env/$CI_COMMIT_REF_NAME.tfvars" -auto-approve
   when: manual
