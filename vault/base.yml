@@ -17,10 +17,10 @@ variables:
   VAULT_VERSION: 1.6.2
   TF_VAR_vault_role: vault_jwt_auth_backend-pipeline
 
-cache:
-  - key: $DIR_PATH-vault-$CI_COMMIT_REF_NAME-terraform
-    paths:
-      - $DIR_PATH/.terraform
-  - key: $DIR_PATH-vault-$CI_COMMIT_REF_NAME-terraform.lock.hcl
-    paths:
-      - $DIR_PATH/.terraform.lock.hcl
+# cache:
+#   - key: $DIR_PATH-vault-$CI_COMMIT_REF_NAME-terraform
+#     paths:
+#       - $DIR_PATH/.terraform
+#   - key: $DIR_PATH-vault-$CI_COMMIT_REF_NAME-terraform.lock.hcl
+#     paths:
+#       - $DIR_PATH/.terraform.lock.hcl
