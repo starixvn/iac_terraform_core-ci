@@ -1,7 +1,7 @@
 workflow:
   rules:
 ###NEXCEL
-    - if: '($CI_PROJECT_ID == "2660")'
+    - if: '($CI_PROJECT_ID == "2660" || $CI_PROJECT_ID == "1897" )'
       variables:
         ORG: "nexcel"
 ###LUMI
