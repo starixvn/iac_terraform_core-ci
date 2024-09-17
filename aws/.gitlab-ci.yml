@@ -23,8 +23,6 @@ stages:
   - deploy_lb
   - build_eks
   - deploy_eks
-  - build_helm
-  - deploy_helm
   - destroy_lb
   - destroy_ec2
   - destroy_helm
