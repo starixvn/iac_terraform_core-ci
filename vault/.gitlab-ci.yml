@@ -36,12 +36,12 @@ include:
 .prepare-init:
   script:
     - echo -e "credentials \"$CI_SERVER_HOST\" {\n  token = \"$CI_JOB_TOKEN\"\n}" > $TF_CLI_CONFIG_FILE
-    - export TF_VAR_CI_JOB_TOKEN=$CI_JOB_TOKEN
     - eval $(ssh-agent -s)
     - mkdir -p ~/.ssh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
     - git config --global user.email "ansible@nexdev.net"
     - git config --global user.name "ansible"
+    - git config --global url."https://ansible:$CI_JOB_TOKEN@$CI_SERVER_HOST".insteadOf "https://$CI_SERVER_HOST"
     - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
     - if [ "$ORG" == "nexcel" ];
       then
