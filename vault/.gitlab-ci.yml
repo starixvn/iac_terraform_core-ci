@@ -64,6 +64,18 @@ include:
     - echo "$CI_PROJECT_NAME - $CI_PROJECT_ID - $ORG - $CI_PROJECT_PATH - $VAULT_ADDR";
     - terraform --version
     - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $VAULT_ENV - $TF_VAR_vault_role - $CI_JOB_JWT"
+    # - cd $DIR_PATH
+    # - export AWS_PROFILE=$VAULT_ENV
+    # - aws configure list
+    # - |
+    #     echo "** Getting credentials"
+    #     vault --version
+    #     export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=$TF_VAR_vault_role jwt=$CI_JOB_JWT)"
+    #     vault token lookup
+    # - terraform init -input=false --backend-config=env/$VAULT_ENV.conf
+
+.prepare-workspace:
+  script:
     - cd $DIR_PATH
     - export AWS_PROFILE=$VAULT_ENV
     - aws configure list
@@ -73,9 +85,6 @@ include:
         export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=$TF_VAR_vault_role jwt=$CI_JOB_JWT)"
         vault token lookup
     - terraform init -input=false --backend-config=env/$VAULT_ENV.conf
-
-.prepare-workspace:
-  script:
     - (terraform workspace select ${CI_COMMIT_REF_NAME} ||
       terraform workspace new ${CI_COMMIT_REF_NAME})
 
