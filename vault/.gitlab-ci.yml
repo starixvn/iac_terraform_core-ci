@@ -51,6 +51,7 @@ include:
         elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export VAULT_ENV="local"; export VAULT_ADDR="https://vault.nexdev.net";
         elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export VAULT_ENV="uat"; export VAULT_ADDR="https://vault.starixuat.com";
         elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export VAULT_ENV="prod"; export VAULT_ADDR="https://vault.starixplay.com";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "kldr"; then export VAULT_ENV="kldr"; export VAULT_ADDR="https://vn-st-vault.byb6181.com";
         fi;
       elif [ "$ORG" == "luminet" ];
       then
@@ -58,6 +59,7 @@ include:
         elif echo $CI_COMMIT_REF_NAME | grep -q "local"; then export VAULT_ENV="local"; export VAULT_ADDR="https://vault.lumigame.com";
         elif echo $CI_COMMIT_REF_NAME | grep -q "uat"; then export VAULT_ENV="uat"; export VAULT_ADDR="https://vault.uat";
         elif echo $CI_COMMIT_REF_NAME | grep -q "prod"; then export VAULT_ENV="prod"; export VAULT_ADDR="https://vault.prod";
+        elif echo $CI_COMMIT_REF_NAME | grep -q "kldr"; then export VAULT_ENV="kldr"; export VAULT_ADDR="https://vault.kldr";
         fi;
       fi;
 
@@ -90,9 +92,9 @@ include:
 
 .base-rules:
   rules:
-    - if: $CI_COMMIT_REF_NAME != "prod" && $CI_COMMIT_REF_NAME != "uat" && $CI_COMMIT_REF_NAME != "local" && $CI_COMMIT_REF_NAME != "dev" && $CI_COMMIT_REF_NAME != "testlab" && ($CI_JOB_STAGE != "validate" && $CI_JOB_STAGE != "code-quality")
+    - if: $CI_COMMIT_REF_NAME != "prod" && $CI_COMMIT_REF_NAME != "kldr" && $CI_COMMIT_REF_NAME != "uat" && $CI_COMMIT_REF_NAME != "local" && $CI_COMMIT_REF_NAME != "dev" && $CI_COMMIT_REF_NAME != "testlab" && ($CI_JOB_STAGE != "validate" && $CI_JOB_STAGE != "code-quality")
       when: never
-    - if: ($CI_COMMIT_REF_NAME == "prod" || $CI_COMMIT_REF_NAME == "uat" || $CI_COMMIT_REF_NAME == "local" || $CI_COMMIT_REF_NAME == "dev" || $CI_COMMIT_REF_NAME == "testlab") && ($CI_JOB_STAGE == "validate" || $CI_JOB_STAGE == "code-quality")
+    - if: ($CI_COMMIT_REF_NAME == "prod" || $CI_COMMIT_REF_NAME == "kldr" || $CI_COMMIT_REF_NAME == "uat" || $CI_COMMIT_REF_NAME == "local" || $CI_COMMIT_REF_NAME == "dev" || $CI_COMMIT_REF_NAME == "testlab") && ($CI_JOB_STAGE == "validate" || $CI_JOB_STAGE == "code-quality")
       when: never
     - if: $CI_PIPELINE_SOURCE == "push"
       changes:
