@@ -171,7 +171,6 @@ include:
   stage: build
   script:
     - !reference [.prepare-init, script]
-    - !reference [.prepare-vault-token, script]
     - !reference [.prepare-workspace, script]
     - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
     - terraform plan -var-file=env/$CI_COMMIT_REF_NAME.tfvars -out=${PLAN} # -lock=false
