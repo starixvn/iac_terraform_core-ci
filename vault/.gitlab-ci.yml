@@ -83,7 +83,7 @@ include:
 .prepare-workspace:
   id_tokens:
     VAULT_ID_TOKEN:
-      aud: $VAULT_ADDR
+      aud: '$VAULT_ADDR'
   script:
     - cd $DIR_PATH
     - export AWS_PROFILE=$VAULT_ENV
