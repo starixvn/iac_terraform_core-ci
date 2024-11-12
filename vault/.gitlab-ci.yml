@@ -65,18 +65,25 @@ include:
 
     - echo "$CI_PROJECT_NAME - $CI_PROJECT_ID - $ORG - $CI_PROJECT_PATH - $VAULT_ADDR";
     - terraform --version
-    - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $VAULT_ENV - $TF_VAR_vault_role - $CI_JOB_JWT"
+    - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $VAULT_ENV - $TF_VAR_vault_role"
     # - cd $DIR_PATH
     # - export AWS_PROFILE=$VAULT_ENV
     # - aws configure list
     # - |
     #     echo "** Getting credentials"
     #     vault --version
-    #     export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=$TF_VAR_vault_role jwt=$CI_JOB_JWT)"
+    #     export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=$TF_VAR_vault_role jwt=$VAULT_ID_TOKEN)"
     #     vault token lookup
     # - terraform init -input=false --backend-config=env/$VAULT_ENV.conf
+    - echo "VAULT_ADDR=${VAULT_ADDR}" > .env
+  artifacts:
+    reports:
+      dotenv: .env
 
 .prepare-workspace:
+  id_tokens:
+    VAULT_ID_TOKEN:
+      aud: $VAULT_ADDR
   script:
     - cd $DIR_PATH
     - export AWS_PROFILE=$VAULT_ENV
@@ -84,11 +91,12 @@ include:
     - |
         echo "** Getting credentials"
         vault --version
-        export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=$TF_VAR_vault_role jwt=$CI_JOB_JWT)"
+        export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=$TF_VAR_vault_role jwt=$VAULT_ID_TOKEN)"
         vault token lookup
     - terraform init -input=false --backend-config=env/$VAULT_ENV.conf
     - (terraform workspace select ${CI_COMMIT_REF_NAME} ||
       terraform workspace new ${CI_COMMIT_REF_NAME})
+
 
 .base-rules:
   rules:
@@ -163,6 +171,7 @@ include:
   stage: build
   script:
     - !reference [.prepare-init, script]
+    - !reference [.prepare-vault-token, script]
     - !reference [.prepare-workspace, script]
     - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
     - terraform plan -var-file=env/$CI_COMMIT_REF_NAME.tfvars -out=${PLAN} # -lock=false
