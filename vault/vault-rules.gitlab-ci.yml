@@ -60,3 +60,8 @@ workflow:
       variables:
         VAULT_ENV: "kldr"
         VAULT_ADDR: "https://vault.kldr"
+
+
+  id_tokens:
+    VAULT_ID_TOKEN:
+      aud: '$VAULT_ADDR'

@@ -33,6 +33,11 @@ include:
 
 # job templates - init #
 ########################
+.predefined_id_tokens:
+  id_tokens:
+    VAULT_ID_TOKEN:
+      aud: '$VAULT_ADDR'
+
 .prepare-init:
   script:
     - echo -e "credentials \"$CI_SERVER_HOST\" {\n  token = \"$CI_JOB_TOKEN\"\n}" > $TF_CLI_CONFIG_FILE
@@ -43,9 +48,10 @@ include:
     - git config --global user.name "ansible"
     - git config --global url."https://ansible:$CI_JOB_TOKEN@$CI_SERVER_HOST".insteadOf "https://$CI_SERVER_HOST"
     - ssh-keyscan -t rsa gitlab.nexdev.net >> ~/.ssh/known_hosts ;
-    - echo "$CI_PROJECT_NAME - $CI_PROJECT_ID - $ORG - $CI_PROJECT_PATH - $VAULT_ADDR";
+    - echo "$CI_PROJECT_NAME - $CI_PROJECT_ID - $ORG - $CI_PROJECT_PATH - $VAULT_ENV - $VAULT_ADDR";
     - terraform --version
     - echo "$TF_COMMAND - $DIR_PATH - $CI_COMMIT_REF_NAME - $VAULT_ENV - $TF_VAR_vault_role"
+    - echo "$ORG - $CI_COMMIT_REF_NAME - $VAULT_ENV - $VAULT_ADDR"
     # - cd $DIR_PATH
     # - export AWS_PROFILE=$VAULT_ENV
     # - aws configure list
@@ -56,16 +62,9 @@ include:
     #     vault token lookup
     # - terraform init -input=false --backend-config=env/$VAULT_ENV.conf
 
-  
-
 
 .prepare-workspace:
-  id_tokens:
-    VAULT_ID_TOKEN:
-      aud: '$VAULT_ADDR'
-
   script:
-    - echo "$ORG - $CI_COMMIT_REF_NAME - $VAULT_ENV - $VAULT_ADDR"
     - cd $DIR_PATH
     - export AWS_PROFILE=$VAULT_ENV
     - aws configure list
@@ -150,6 +149,8 @@ include:
 
 .plan:
   stage: build
+  extends:
+    - .predefined_id_tokens
   script:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
@@ -167,6 +168,8 @@ include:
 
 .apply:
   stage: deploy
+  extends:
+    - .predefined_id_tokens
   script:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
@@ -182,6 +185,8 @@ include:
 
 .destroy:
   stage: destroy
+  extends:
+    - .predefined_id_tokens
   script:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
