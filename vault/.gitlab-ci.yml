@@ -36,7 +36,7 @@ include:
 .predefined_id_tokens:
   id_tokens:
     VAULT_ID_TOKEN:
-      aud: '$VAULT_ADDR'
+      aud: 'https://gitlab.nexdev.net'
 
 .prepare-init:
   script:
