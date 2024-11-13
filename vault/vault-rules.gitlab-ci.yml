@@ -18,7 +18,7 @@ workflow:
       variables:
         VAULT_ENV: "testlab"
         VAULT_ADDR: "http://10.70.70.142:8200"
-    - if: '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "dev"'
+    - if: '$ORG == "nexcel" && $CI_COMMIT_REF_NAME =~ /dev/'
       variables:
         VAULT_ENV: "dev"
         VAULT_ADDR: "https://vault-dev.nexdev.net"
