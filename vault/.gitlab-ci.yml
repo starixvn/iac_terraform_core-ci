@@ -55,58 +55,57 @@ include:
     #     export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=$TF_VAR_vault_role jwt=$VAULT_ID_TOKEN)"
     #     vault token lookup
     # - terraform init -input=false --backend-config=env/$VAULT_ENV.conf
-    - echo "VAULT_ADDR=${VAULT_ADDR}" > .env
 
   # Rules for set VAULT_ADDR variable
   rules:
     # Conditions set variable for NEXCEL
-    - if '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "main"'
+    - if: '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "main"'
       variables:
         VAULT_ENV: "dev"
         VAULT_ADDR: "https://vault-dev.nexdev.net"
-    - if '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "testlab"'
+    - if: '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "testlab"'
       variables:
         VAULT_ENV: "testlab"
         VAULT_ADDR: "http://10.70.70.142:8200"
-    - if '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "dev"'
+    - if: '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "dev"'
       variables:
         VAULT_ENV: "dev"
         VAULT_ADDR: "https://vault-dev.nexdev.net"
-    - if '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "local"'
+    - if: '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "local"'
       variables:
         VAULT_ENV: "local"
         VAULT_ADDR: "https://vault.nexdev.net"
-    - if '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "uat"'
+    - if: '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "uat"'
       variables:
         VAULT_ENV: "uat"
         VAULT_ADDR: "https://vault.starixuat.com"
-    - if '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "prod"'
+    - if: '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "prod"'
       variables:
         VAULT_ENV: "prod"
         VAULT_ADDR: "https://vault.starixplay.com"
-    - if '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "kldr"'
+    - if: '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "kldr"'
       variables:
         VAULT_ENV: "kldr"
         VAULT_ADDR: "https://vn-st-vault.byb6181.com"
 
     # Conditions set variable for LUMINET
-    - if '$ORG == "luminet" && $CI_COMMIT_REF_NAME == "main"'
+    - if: '$ORG == "luminet" && $CI_COMMIT_REF_NAME == "main"'
       variables:
         VAULT_ENV: "local"
         VAULT_ADDR: "https://vault.lumigame.com"
-    - if '$ORG == "luminet" && $CI_COMMIT_REF_NAME == "local"'
+    - if: '$ORG == "luminet" && $CI_COMMIT_REF_NAME == "local"'
       variables:
         VAULT_ENV: "local"
         VAULT_ADDR: "https://vault.lumigame.com"
-    - if '$ORG == "luminet" && $CI_COMMIT_REF_NAME == "uat"'
+    - if: '$ORG == "luminet" && $CI_COMMIT_REF_NAME == "uat"'
       variables:
         VAULT_ENV: "uat"
         VAULT_ADDR: "https://vault.uat"
-    - if '$ORG == "luminet" && $CI_COMMIT_REF_NAME == "prod"'
+    - if: '$ORG == "luminet" && $CI_COMMIT_REF_NAME == "prod"'
       variables:
         VAULT_ENV: "prod"
         VAULT_ADDR: "https://vault.prod"
-    - if '$ORG == "luminet" && $CI_COMMIT_REF_NAME == "kldr"'
+    - if: '$ORG == "luminet" && $CI_COMMIT_REF_NAME == "kldr"'
       variables:
         VAULT_ENV: "kldr"
         VAULT_ADDR: "https://vault.kldr"
