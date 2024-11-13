@@ -56,6 +56,28 @@ include:
     #     vault token lookup
     # - terraform init -input=false --backend-config=env/$VAULT_ENV.conf
 
+  
+
+
+.prepare-workspace:
+
+  id_tokens:
+    VAULT_ID_TOKEN:
+      aud: '$VAULT_ADDR'
+  script:
+    - echo "$ORG - $CI_COMMIT_REF_NAME - $CI_COMMIT_REF_NAME - $VAULT_ENV - $VAULT_ADDR"
+    - cd $DIR_PATH
+    - export AWS_PROFILE=$VAULT_ENV
+    - aws configure list
+    - |
+        echo "** Getting credentials"
+        vault --version
+        export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=$TF_VAR_vault_role jwt=$VAULT_ID_TOKEN)"
+        vault token lookup
+    - terraform init -input=false --backend-config=env/$VAULT_ENV.conf
+    - (terraform workspace select ${CI_COMMIT_REF_NAME} ||
+      terraform workspace new ${CI_COMMIT_REF_NAME})
+
   # Rules for set VAULT_ADDR variable
   rules:
     # Conditions set variable for NEXCEL
@@ -109,24 +131,6 @@ include:
       variables:
         VAULT_ENV: "kldr"
         VAULT_ADDR: "https://vault.kldr"
-
-
-.prepare-workspace:
-  id_tokens:
-    VAULT_ID_TOKEN:
-      aud: '$VAULT_ADDR'
-  script:
-    - cd $DIR_PATH
-    - export AWS_PROFILE='$VAULT_ENV'
-    - aws configure list
-    - |
-        echo "** Getting credentials"
-        vault --version
-        export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=$TF_VAR_vault_role jwt=$VAULT_ID_TOKEN)"
-        vault token lookup
-    - terraform init -input=false --backend-config=env/$VAULT_ENV.conf
-    - (terraform workspace select ${CI_COMMIT_REF_NAME} ||
-      terraform workspace new ${CI_COMMIT_REF_NAME})
 
 
 .base-rules:
