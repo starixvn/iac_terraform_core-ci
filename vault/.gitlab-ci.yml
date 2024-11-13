@@ -117,7 +117,7 @@ include:
       aud: '$VAULT_ADDR'
   script:
     - cd $DIR_PATH
-    - export AWS_PROFILE=$VAULT_ENV
+    - export AWS_PROFILE='$VAULT_ENV'
     - aws configure list
     - |
         echo "** Getting credentials"
