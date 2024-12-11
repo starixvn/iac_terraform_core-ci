@@ -38,6 +38,10 @@ workflow:
       variables:
         VAULT_ENV: "kldr"
         VAULT_ADDR: "https://vn-st-vault.byb6181.com"
+    - if: '$ORG == "nexcel" && $CI_COMMIT_REF_NAME == "sit"'
+      variables:
+        VAULT_ENV: "sit"
+        VAULT_ADDR: "https://vault.playonesit.com"
 
     # Conditions set variable for LUMINET
     - if: '$ORG == "luminet" && $CI_COMMIT_REF_NAME == "main"'
