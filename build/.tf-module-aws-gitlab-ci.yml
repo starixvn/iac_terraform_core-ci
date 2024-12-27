@@ -23,10 +23,11 @@ publish_terraform_module:
     - echo "Setting the Terraform Module Version."
     - echo "Getting the release number from the branch name."
     - |
-      if [ $CI_COMMIT_TAG ]; then \
-        RELEASE_NUMBER=$(echo $CI_COMMIT_TAG | cut -d 'v' -f2) \
-      else \
+      if [ $CI_COMMIT_TAG ]; then
+        RELEASE_NUMBER=$(echo $CI_COMMIT_TAG | cut -d 'v' -f2)
+      else
         RELEASE_NUMBER=$(echo $CI_COMMIT_BRANCH | cut -d '/' -f2)
+      fi
     - echo "Release Number - $RELEASE_NUMBER"
     - TERRAFORM_MODULE_VERSION=${RELEASE_NUMBER}
     - echo "Terraform Module Version - $TERRAFORM_MODULE_VERSION"
