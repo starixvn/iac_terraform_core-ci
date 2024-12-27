@@ -36,7 +36,7 @@ publish_terraform_module:
     - tar -vczf ${TERRAFORM_MODULE_NAME}-${TERRAFORM_TARGET_PLATFORM}-${TERRAFORM_MODULE_VERSION}.tgz -C ${TERRAFORM_MODULE_DIR}/src --exclude=./.git .
     - ls -l
     - echo "Pushing the tag to the remote repository."
-    - 'curl --fail-with-body --location --header "PRIVATE-TOKEN: ${CI_JOB_TOKEN}"
+    - 'curl --fail-with-body --location --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
          --upload-file ${TERRAFORM_MODULE_NAME}-${TERRAFORM_TARGET_PLATFORM}-${TERRAFORM_MODULE_VERSION}.tgz
          ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/terraform/modules/${TERRAFORM_MODULE_NAME}/${TERRAFORM_TARGET_PLATFORM}/${TERRAFORM_MODULE_VERSION}/file'
     - echo "Terraform module ${TERRAFORM_MODULE_NAME} version ${TERRAFORM_MODULE_VERSION} has been published to GitLab Infrastructure Registry"
