@@ -154,6 +154,9 @@ include:
   script:
     - !reference [.prepare-init, script]
     - !reference [.prepare-workspace, script]
+    - |
+      echo "- Available environment variables:"
+      env | sort
     - alias convert_report="jq -r '([.resource_changes[]?.change.actions?]|flatten)|{\"create\":(map(select(.==\"create\"))|length),\"update\":(map(select(.==\"update\"))|length),\"delete\":(map(select(.==\"delete\"))|length)}'"
     - terraform plan -var-file=env/$CI_COMMIT_REF_NAME.tfvars -out=${PLAN} # -lock=false
     - "terraform show -json $PLAN | convert_report > $JSON_PLAN_FILE"
